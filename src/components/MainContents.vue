@@ -94,17 +94,6 @@ onMounted(() => {
       currentPane.title = fileName;
     }
   });
-
-  // editable-content内に初期のpタグを挿入
-  const editableContents = document.querySelectorAll(".editable-content");
-  editableContents.forEach((editableContent) => {
-    if (editableContent && editableContent.children.length === 0) {
-      const p = document.createElement("p");
-      p.setAttribute("contenteditable", "true");
-      p.innerHTML = "&#8203;";
-      editableContent.appendChild(p);
-    }
-  });
 });
 
 // IME入力中かどうかを判定するフラグ
@@ -238,7 +227,9 @@ const handleKeyDown = (event: KeyboardEvent) => {
           @keydown="handleKeyDown"
           @compositionstart="handleCompositionStart"
           @compositionend="handleCompositionEnd"
-        ></div>
+        >
+          <p contenteditable="true" innerHTML="&#8203;"></p>
+        </div>
       </a-tab-pane>
     </a-tabs>
   </a-config-provider>
