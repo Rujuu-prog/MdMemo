@@ -6,7 +6,7 @@ import { theme } from "ant-design-vue";
 const panes = ref<
   {
     title: string; // タブのタイトル
-    content: string; // タブの内容
+    content: any; // タブの内容
     filePath: string; // 保存されたファイルのパス
     key: string; // タブを一意に識別するためのキー
     closable?: boolean; // タブが閉じられるかどうか
@@ -94,7 +94,107 @@ onMounted(() => {
       currentPane.title = fileName;
     }
   });
+
+  // editable-content内に初期のpタグを挿入
+  const editableContents = document.querySelectorAll(".editable-content");
+  editableContents.forEach((editableContent) => {
+    if (editableContent && editableContent.children.length === 0) {
+      const p = document.createElement("p");
+      p.setAttribute("contenteditable", "true");
+      p.innerHTML = "&#8203;";
+      editableContent.appendChild(p);
+    }
+  });
 });
+
+// 新しい要素を作成し、親要素に追加する関数
+function createElementAndAppend(type, attributes, parent) {
+  const element = document.createElement(type);
+  Object.keys(attributes).forEach((key) => {
+    element.setAttribute(key, attributes[key]);
+  });
+  if (attributes.textContent) {
+    element.textContent = attributes.textContent;
+    delete attributes.textContent;
+  }
+  if (attributes.innerHTML) {
+    element.innerHTML = attributes.innerHTML;
+    delete attributes.innerHTML;
+  }
+  parent.appendChild(element);
+  return element;
+}
+
+// カーソルを指定された要素に移動させる関数
+function moveCursorToElement(element) {
+  const range = document.createRange();
+  const selection = window.getSelection();
+  range.selectNodeContents(element);
+  range.collapse(true);
+  selection?.removeAllRanges();
+  selection?.addRange(range);
+}
+
+const handleKeyDown = (event: KeyboardEvent) => {
+  if (event.key === "Enter") {
+    event.preventDefault(); // デフォルトのEnterキーの挙動を抑制
+    const selection = window.getSelection();
+    if (selection && selection.rangeCount > 0) {
+      const range = selection.getRangeAt(0);
+      const startNode = range.startContainer;
+
+      let targetNode: Element | null = null;
+      if (startNode instanceof Element) {
+        targetNode = startNode;
+      } else if (startNode.parentNode instanceof Element) {
+        targetNode = startNode.parentNode;
+      }
+
+      if (targetNode) {
+        const editableDiv = targetNode.closest(".editable-content");
+
+        if (editableDiv) {
+          const textContent = startNode.textContent || "";
+          if (textContent.startsWith("# ")) {
+            // targetNodeをh1タグに置き換える
+            targetNode.replaceWith(
+              createElementAndAppend(
+                "h1",
+                {
+                  contenteditable: "true",
+                  textContent: textContent.replace(/^#+\s/, ""),
+                },
+                editableDiv
+              )
+            );
+
+            // h1タグの後に新しいpタグを追加してカーソルを移動
+            const newP = createElementAndAppend(
+              "p",
+              {
+                contenteditable: "true",
+                innerHTML: "&#8203;",
+              },
+              editableDiv
+            );
+            moveCursorToElement(newP);
+          } else {
+            // 新しいpタグを追加
+            const newP = createElementAndAppend(
+              "p",
+              {
+                contenteditable: "true",
+                innerHTML: "&#8203;",
+              },
+              editableDiv
+            );
+            moveCursorToElement(newP);
+          }
+        }
+      }
+    }
+  }
+};
 </script>
 
 <template>
@@ -115,12 +215,13 @@ onMounted(() => {
         :key="pane.key"
         :tab="pane.title"
         :closable="pane.closable"
+        ref="editableContents"
       >
-        <textarea
-          v-model="pane.content"
-          placeholder="メモを入力してください"
-          class="memo-input"
-        ></textarea>
+        <div
+          class="editable-content memo-input"
+          contenteditable="true"
+          :onKeydown="handleKeyDown"
+        ></div>
       </a-tab-pane>
     </a-tabs>
   </a-config-provider>
