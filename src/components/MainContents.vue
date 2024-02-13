@@ -233,7 +233,7 @@ const handleKeyDown = (event: KeyboardEvent) => {
         <div
           class="editable-content memo-input"
           contenteditable="true"
-          @onKeydown="handleKeyDown"
+          @keydown="handleKeyDown"
           @compositionstart="handleCompositionStart"
           @compositionend="handleCompositionEnd"
         ></div>
