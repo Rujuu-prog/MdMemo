@@ -167,7 +167,9 @@ const handleKeyDown = (event: KeyboardEvent) => {
         const editableDiv = targetNode.closest(".editable-content");
 
         if (editableDiv) {
-          const textContent = startNode.textContent || "";
+          // ゼロ幅スペースを削除してからtextコンテンツを取得
+          const textContent =
+            startNode.textContent?.replace(/\u200B/g, "") || "";
           if (textContent.startsWith("# ")) {
             // targetNodeをh1タグに置き換える
             targetNode.replaceWith(
