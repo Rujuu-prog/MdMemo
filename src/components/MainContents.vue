@@ -107,6 +107,18 @@ onMounted(() => {
   });
 });
 
+// IME入力中かどうかを判定するフラグ
+let isComposing = false;
+// IME入力開始時にフラグを立てる
+const handleCompositionStart = () => {
+  isComposing = true;
+};
+
+// IME入力終了時にフラグを下ろす
+const handleCompositionEnd = () => {
+  isComposing = false;
+};
+
 // 新しい要素を作成し、親要素に追加する関数
 function createElementAndAppend(type, attributes, parent) {
   const element = document.createElement(type);
@@ -136,7 +148,8 @@ function moveCursorToElement(element) {
 }
 
 const handleKeyDown = (event: KeyboardEvent) => {
-  if (event.key === "Enter") {
+  // Enterキーが押されたときの処理(IME入力中は無視)
+  if (event.key === "Enter" && !isComposing) {
     event.preventDefault(); // デフォルトのEnterキーの挙動を抑制
     const selection = window.getSelection();
     if (selection && selection.rangeCount > 0) {
@@ -220,7 +233,9 @@ const handleKeyDown = (event: KeyboardEvent) => {
         <div
           class="editable-content memo-input"
           contenteditable="true"
-          :onKeydown="handleKeyDown"
+          @onKeydown="handleKeyDown"
+          @compositionstart="handleCompositionStart"
+          @compositionend="handleCompositionEnd"
         ></div>
       </a-tab-pane>
     </a-tabs>
