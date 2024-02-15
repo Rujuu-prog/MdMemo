@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { ref, onMounted } from "vue";
 import { theme } from "ant-design-vue";
+import extractFileNameForTabTitle from "../utils/extractFileNameForTabTitle";
 
 // タブの情報を保持する配列
 const panes = ref<
@@ -26,7 +27,7 @@ const newTabIndex = ref(0);
 const add = (filePath: string | false, content: string | false) => {
   activeKey.value = `newTab${++newTabIndex.value}`;
   panes.value.push({
-    title: filePath ? getFileName(filePath) : "New Memo",
+    title: extractFileNameForTabTitle(filePath),
     content: content ? String(content) : "",
     filePath: filePath ? String(filePath) : "",
     key: activeKey.value,
@@ -63,11 +64,6 @@ window.electronAPI.openFileDialog((_e, filePath, data) => {
   add(filePath, data);
 });
 
-// ファイルパスからファイル名を取得する関数
-const getFileName = (filePath: string) => {
-  return filePath.split("/").pop() || `New Tab`;
-};
-
 // コンポーネントがマウントされた後の処理
 onMounted(() => {
   // 保存リクエストの処理
@@ -89,7 +85,7 @@ onMounted(() => {
       (pane) => pane.key === activeKey.value
     );
     if (currentPane) {
-      const fileName = getFileName(savedFilePath);
+      const fileName = extractFileNameForTabTitle(savedFilePath);
       currentPane.filePath = savedFilePath;
       currentPane.title = fileName;
     }
