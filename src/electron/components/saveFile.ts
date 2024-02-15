@@ -1,4 +1,3 @@
-// src/electron/saveFile.ts
 import { dialog, BrowserWindow } from "electron";
 import fs from "fs";
 import { promisify } from "util";
@@ -15,15 +14,23 @@ export async function saveFile(
     const { canceled, filePath: chosenPath } = await dialog.showSaveDialog(
       win,
       {
-        // ダイアログオプション...
+        title: "Save Markdown File", // 保存ダイアログのタイトル
+        buttonLabel: "Save", // 保存ボタンのラベル
+        filters: [
+          {
+            name: "Markdown Files", // ユーザーに表示されるファイルの種類の説明
+            extensions: ["md"], // 許可するファイルの拡張子
+          },
+        ],
       }
     );
     if (canceled || !chosenPath) return undefined;
-    file = chosenPath;
+    // ユーザーが拡張子を指定しない場合に`.md`を追加
+    file = chosenPath.endsWith(".md") ? chosenPath : `${chosenPath}.md`;
   }
 
   await writeFileAsync(file, data);
-  // fileが保存されたことをレンダラープロセスにfilepathを渡して通知
+  // ファイルが保存されたことをレンダラープロセスにファイルパスを渡して通知
   win.webContents.send("file-saved", file);
   return file;
 }

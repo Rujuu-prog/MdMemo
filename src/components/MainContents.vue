@@ -1,7 +1,9 @@
 <script lang="ts" setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, nextTick } from "vue";
 import { theme } from "ant-design-vue";
 import extractFileNameForTabTitle from "../utils/extractFileNameForTabTitle";
+import { convertMarkdownToHtml } from "../utils/markdownToHtml";
+import { convertHtmlToMarkdown } from "../utils/htmlToMarkdown";
 
 // タブの情報を保持する配列
 const panes = ref<
@@ -24,14 +26,26 @@ const activeKey = ref(panes.value[0].key);
 const newTabIndex = ref(0);
 
 // タブを追加する関数
-const add = (filePath: string | false, content: string | false) => {
+const add = async (filePath: string | false, content: string | false) => {
   activeKey.value = `newTab${++newTabIndex.value}`;
-  panes.value.push({
+  const newPane = {
     title: extractFileNameForTabTitle(filePath),
-    content: content ? String(content) : "",
+    content: content ? await convertMarkdownToHtml(content) : "",
     filePath: filePath ? String(filePath) : "",
-    key: activeKey.value,
-  });
+    key: `newTab${newTabIndex.value}`,
+  };
+  panes.value.push(newPane);
+
+  await nextTick(); // DOMの更新を待つよう指示
+
+  // DOMが更新された後、contentが渡されていた場合は新しいタブの内容を更新
+  if (content) {
+    const editableDivs = document.querySelectorAll(".editable-content");
+    const newDiv = editableDivs[editableDivs.length - 1]; // 新しく追加されたdivを取得
+    if (newDiv) {
+      newDiv.innerHTML = content; // 新しいcontentの内容でdivを更新
+    }
+  }
 };
 
 // タブを削除する関数
@@ -61,7 +75,8 @@ const onEdit = (targetKey: string | MouseEvent, action: string) => {
 
 // ファイルオープンダイアログからのファイル選択を処理
 window.electronAPI.openFileDialog((_e, filePath, data) => {
-  add(filePath, data);
+  const htmlContent = convertMarkdownToHtml(data);
+  add(filePath, htmlContent);
 });
 
 // コンポーネントがマウントされた後の処理
@@ -72,8 +87,9 @@ onMounted(() => {
       (pane) => pane.key === activeKey.value
     );
     if (currentPane) {
+      const markdownContent = convertHtmlToMarkdown(currentPane.content);
       window.electronAPI.saveFile(
-        currentPane.content,
+        markdownContent,
         currentPane.filePath || undefined
       );
     }
@@ -195,6 +211,15 @@ const handleKeyDown = (event: KeyboardEvent) => {
     }
   }
 };
+
+// div要素のHTMLを保存する関数
+const saveContent = (event: Event) => {
+  const target = event.target as HTMLDivElement;
+  const currentPane = panes.value.find((pane) => pane.key === activeKey.value);
+  if (currentPane) {
+    currentPane.content = target.innerHTML;
+  }
+};
 </script>
 
 <template>
@@ -223,6 +248,7 @@ const handleKeyDown = (event: KeyboardEvent) => {
           @keydown="handleKeyDown"
           @compositionstart="handleCompositionStart"
           @compositionend="handleCompositionEnd"
+          @input="saveContent"
         >
           <p contenteditable="true" innerHTML="&#8203;"></p>
         </div>
