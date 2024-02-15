@@ -276,4 +276,7 @@ const saveContent = (event: Event) => {
 :deep(.ant-tabs-content) {
   height: 100%;
 }
+:deep(.ant-tabs-nav) {
+  margin: 0;
+}
 </style>
