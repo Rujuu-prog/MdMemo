@@ -2,7 +2,7 @@
   "name": "mdmemo",
   "private": true,
   "version": "0.0.0",
-  "author": "Your Name",
+  "author": "Rujuu",
   "main": "dist/electron/main/main.js",
   "scripts": {
     "vite:dev": "vite",
@@ -12,8 +12,8 @@
     "watch": "tsc -w",
     "lint": "eslint -c .eslintrc --ext .ts ./src",
     "app:dev": "tsc && concurrently vite \" electron .\" \"tsc -w\"",
-    "app:build": "npm run vite:build && tsc && electron-builder",
-    "app:preview": "npm run vite:build && tsc && electron ."
+    "app:build": "yarn run vite:build && tsc && electron-builder",
+    "app:preview": "yarn run vite:build && tsc && electron ."
   },
   "build": {
     "appId": "YourAppID",
