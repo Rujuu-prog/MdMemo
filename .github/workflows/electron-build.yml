@@ -9,7 +9,11 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    name: Build on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
     steps:
       - uses: actions/checkout@v2
       - name: Setup Node.js
@@ -18,11 +22,23 @@ jobs:
           node-version: "20"
       - name: Install Dependencies
         run: yarn install
-      - name: Build Electron App
-        run: yarn run app:build
+      - name: Build Electron App for macOS
+        if: matrix.os == 'macos-latest'
+        run: yarn run app:build:mac
+      - name: Build Electron App for Windows
+        if: matrix.os == 'windows-latest'
+        run: yarn run app:build:win
+      - name: Build Electron App for Linux
+        if: matrix.os == 'ubuntu-latest'
+        run: yarn run app:build:linux
       - name: Release
+        if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v1
         with:
-          files: release/**/*.dmg release/**/*.exe release/**/*.AppImage
+          files: |
+            release/**/*.dmg
+            release/**/*.exe
+            release/**/*.AppImage
+            release/**/*.snap
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

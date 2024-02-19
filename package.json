@@ -13,6 +13,9 @@
     "lint": "eslint -c .eslintrc --ext .ts ./src",
     "app:dev": "tsc && concurrently vite \" electron .\" \"tsc -w\"",
     "app:build": "yarn run vite:build && tsc && electron-builder -mwl --publish never",
+    "app:build:mac": "yarn run vite:build && tsc && electron-builder --mac --publish never",
+    "app:build:win": "yarn run vite:build && tsc && electron-builder --win --publish never",
+    "app:build:linux": "yarn run vite:build && tsc && electron-builder --linux --publish never",
     "app:preview": "yarn run vite:build && tsc && electron ."
   },
   "build": {
