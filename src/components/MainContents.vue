@@ -1,12 +1,15 @@
 <script lang="ts" setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, nextTick } from "vue";
 import { theme } from "ant-design-vue";
+import extractFileNameForTabTitle from "../utils/extractFileNameForTabTitle";
+import { convertMarkdownToHtml } from "../utils/markdownToHtml";
+import { convertHtmlToMarkdown } from "../utils/htmlToMarkdown";
 
 // タブの情報を保持する配列
 const panes = ref<
   {
     title: string; // タブのタイトル
-    content: string; // タブの内容
+    content: any; // タブの内容
     filePath: string; // 保存されたファイルのパス
     key: string; // タブを一意に識別するためのキー
     closable?: boolean; // タブが閉じられるかどうか
@@ -23,14 +26,26 @@ const activeKey = ref(panes.value[0].key);
 const newTabIndex = ref(0);
 
 // タブを追加する関数
-const add = (filePath: string | false, content: string | false) => {
+const add = async (filePath: string | false, content: string | false) => {
   activeKey.value = `newTab${++newTabIndex.value}`;
-  panes.value.push({
-    title: filePath ? getFileName(filePath) : "New Memo",
-    content: content ? String(content) : "",
+  const newPane = {
+    title: extractFileNameForTabTitle(filePath),
+    content: content ? await convertMarkdownToHtml(content) : "",
     filePath: filePath ? String(filePath) : "",
-    key: activeKey.value,
-  });
+    key: `newTab${newTabIndex.value}`,
+  };
+  panes.value.push(newPane);
+
+  await nextTick(); // DOMの更新を待つよう指示
+
+  // DOMが更新された後、contentが渡されていた場合は新しいタブの内容を更新
+  if (content) {
+    const editableDivs = document.querySelectorAll(".editable-content");
+    const newDiv = editableDivs[editableDivs.length - 1]; // 新しく追加されたdivを取得
+    if (newDiv) {
+      newDiv.innerHTML = content; // 新しいcontentの内容でdivを更新
+    }
+  }
 };
 
 // タブを削除する関数
@@ -60,13 +75,9 @@ const onEdit = (targetKey: string | MouseEvent, action: string) => {
 
 // ファイルオープンダイアログからのファイル選択を処理
 window.electronAPI.openFileDialog((_e, filePath, data) => {
-  add(filePath, data);
+  const htmlContent = convertMarkdownToHtml(data);
+  add(filePath, htmlContent);
 });
-
-// ファイルパスからファイル名を取得する関数
-const getFileName = (filePath: string) => {
-  return filePath.split("/").pop() || `New Tab`;
-};
 
 // コンポーネントがマウントされた後の処理
 onMounted(() => {
@@ -76,8 +87,9 @@ onMounted(() => {
       (pane) => pane.key === activeKey.value
     );
     if (currentPane) {
+      const markdownContent = convertHtmlToMarkdown(currentPane.content);
       window.electronAPI.saveFile(
-        currentPane.content,
+        markdownContent,
         currentPane.filePath || undefined
       );
     }
@@ -89,12 +101,133 @@ onMounted(() => {
       (pane) => pane.key === activeKey.value
     );
     if (currentPane) {
-      const fileName = getFileName(savedFilePath);
+      const fileName = extractFileNameForTabTitle(savedFilePath);
       currentPane.filePath = savedFilePath;
       currentPane.title = fileName;
     }
   });
 });
+
+// IME入力中かどうかを判定するフラグ
+let isComposing = false;
+// IME入力開始時にフラグを立てる
+const handleCompositionStart = () => {
+  isComposing = true;
+};
+
+// IME入力終了時にフラグを下ろす
+const handleCompositionEnd = () => {
+  isComposing = false;
+};
+
+// 新しい要素を作成し、親要素に追加する関数
+function createElementAndAppend(type, attributes, parentNode): Element {
+  const element: Element = document.createElement(type);
+  Object.keys(attributes).forEach((key) => {
+    element.setAttribute(key, attributes[key]);
+  });
+  // textContentまたはinnerHTMLが提供されていない場合、ゼロ幅スペースを挿入
+  if (!attributes.textContent && !attributes.innerHTML) {
+    element.innerHTML = "&#8203;"; // ゼロ幅スペースを挿入
+  } else {
+    if (attributes.textContent) {
+      element.textContent = attributes.textContent;
+    }
+    if (attributes.innerHTML) {
+      element.innerHTML = attributes.innerHTML;
+    }
+  }
+  parentNode.parentElement.insertBefore(element, parentNode.nextSibling);
+  return element;
+}
+
+// カーソルを指定された要素に移動させる関数
+function moveCursorToElement(element: Element) {
+  const range = document.createRange();
+  const selection = window.getSelection();
+  range.selectNodeContents(element); // 新しいpタグの内容を選択範囲として設定
+  range.collapse(true); // 選択範囲を要素の先頭に折りたたむ
+  if (selection) {
+    selection.removeAllRanges(); // 既存の選択範囲をクリア
+    selection.addRange(range); // 新しい選択範囲を追加
+  }
+}
+
+const handleKeyDown = (event: KeyboardEvent) => {
+  if (event.key === "Enter" && !isComposing) {
+    event.preventDefault(); // デフォルトのEnterキーの挙動を抑制
+
+    const selection = window.getSelection();
+    if (selection && selection.rangeCount > 0) {
+      const range = selection.getRangeAt(0);
+      const startNode = range.startContainer;
+
+      // startNodeがテキストノードで、かつparentNodeが存在する場合
+      if (startNode.nodeType === Node.TEXT_NODE && startNode.parentNode) {
+        // 今のカーソル位置の親要素を取得
+        let parentNode = startNode.parentNode as Element;
+        // 入力エリアのdiv要素を取得
+        const parentElement = parentNode.parentElement;
+        // カーソルの前後でテキストを分割
+        const textContent = startNode.textContent ?? "";
+        // beforeTextが空文字の場合は、innderTextにゼロ幅スペースを挿入
+        const beforeText =
+          textContent.slice(0, range.startOffset).replace(/\u200B/g, "") ||
+          "\u200B";
+        const afterText = textContent.slice(range.startOffset);
+
+        // 現在のテキストノードの内容をbeforeTextのみに更新
+        startNode.textContent = beforeText;
+
+        // #から始まり、#は最大6個まで、その後に半角スペースがある場合
+        if (/^#{1,6}\s/.test(beforeText)) {
+          // マッチした`#`の数を基に見出しレベルを決定
+          const match = beforeText.match(/^#+/);
+          if (match) {
+            const headingLevel = match[0].length;
+            const headingType = `h${Math.min(headingLevel, 6)}`; // h1からh6までを保証
+
+            // 対応する見出し要素を作成し、parentNodeを置き換え
+            const headingElement = createElementAndAppend(
+              headingType,
+              {
+                contenteditable: "true",
+                textContent: beforeText.replace(/^#+\s/, ""),
+              },
+              parentNode
+            );
+            parentNode.replaceWith(headingElement);
+
+            // parentNodeを置き換えた要素に更新
+            parentNode = headingElement;
+          }
+        }
+
+        // 新しいp要素を追加
+        const newPElement = createElementAndAppend(
+          "p",
+          {
+            contenteditable: "true",
+            textContent: afterText,
+          },
+          parentNode
+        );
+
+        // カーソルを新しいp要素に移動させる
+        moveCursorToElement(newPElement);
+      }
+    }
+  }
+};
+
+// div要素のHTMLを保存する関数
+const saveContent = (event: Event) => {
+  const target = event.target as HTMLDivElement;
+  const currentPane = panes.value.find((pane) => pane.key === activeKey.value);
+  if (currentPane) {
+    currentPane.content = target.innerHTML;
+  }
+};
 </script>
 
 <template>
@@ -115,12 +248,18 @@ onMounted(() => {
         :key="pane.key"
         :tab="pane.title"
         :closable="pane.closable"
+        ref="editableContents"
       >
-        <textarea
-          v-model="pane.content"
-          placeholder="メモを入力してください"
-          class="memo-input"
-        ></textarea>
+        <div
+          class="editable-content memo-input"
+          contenteditable="true"
+          @keydown="handleKeyDown"
+          @compositionstart="handleCompositionStart"
+          @compositionend="handleCompositionEnd"
+          @input="saveContent"
+        >
+          <p contenteditable="true" innerHTML="&#8203;"></p>
+        </div>
       </a-tab-pane>
     </a-tabs>
   </a-config-provider>
@@ -144,5 +283,8 @@ onMounted(() => {
 }
 :deep(.ant-tabs-content) {
   height: 100%;
+}
+:deep(.ant-tabs-nav) {
+  margin: 0;
 }
 </style>

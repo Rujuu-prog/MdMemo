@@ -14,7 +14,7 @@ export const openFile = async (win: BrowserWindow) => {
       filters: [
         {
           name: "テキストファイル",
-          extensions: ["txt", "text", "md", "markdown"],
+          extensions: ["md", "markdown"],
         },
       ],
     })

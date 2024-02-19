@@ -2,7 +2,7 @@
   "name": "mdmemo",
   "private": true,
   "version": "0.0.0",
-  "author": "Your Name",
+  "author": "Rujuu",
   "main": "dist/electron/main/main.js",
   "scripts": {
     "vite:dev": "vite",
@@ -12,8 +12,8 @@
     "watch": "tsc -w",
     "lint": "eslint -c .eslintrc --ext .ts ./src",
     "app:dev": "tsc && concurrently vite \" electron .\" \"tsc -w\"",
-    "app:build": "npm run vite:build && tsc && electron-builder",
-    "app:preview": "npm run vite:build && tsc && electron ."
+    "app:build": "yarn run vite:build && tsc && electron-builder",
+    "app:preview": "yarn run vite:build && tsc && electron ."
   },
   "build": {
     "appId": "YourAppID",
@@ -50,7 +50,9 @@
     }
   },
   "dependencies": {
+    "@types/turndown": "^5.0.4",
     "ant-design-vue": "4.x",
+    "turndown": "^7.1.2",
     "vue": "^3.4.15"
   },
   "devDependencies": {
@@ -59,6 +61,7 @@
     "concurrently": "^8.2.2",
     "electron": "^28.2.2",
     "electron-builder": "^24.9.1",
+    "marked": "^12.0.0",
     "postcss": "^8.4.35",
     "typescript": "^5.2.2",
     "unplugin-vue-components": "^0.26.0",
