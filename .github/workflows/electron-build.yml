@@ -45,6 +45,8 @@ jobs:
   release:
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     if: startsWith(github.ref, 'refs/tags/v')
     steps:
       - name: Download All Artifacts
@@ -53,9 +55,9 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            app-macos-latest/release/**/*.dmg
-            app-windows-latest/release/**/*.exe
-            app-ubuntu-latest/release/**/*.AppImage
-            app-ubuntu-latest/release/**/*.snap
+            app-macos-latest/**/*.dmg
+            app-windows-latest/**/*.exe
+            app-ubuntu-latest/**/*.AppImage
+            app-ubuntu-latest/**/*.snap
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

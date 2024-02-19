@@ -1,7 +1,7 @@
 {
   "name": "mdmemo",
   "private": true,
-  "version": "0.1.2",
+  "version": "0.1.4",
   "author": "Rujuu",
   "main": "dist/electron/main/main.js",
   "scripts": {
