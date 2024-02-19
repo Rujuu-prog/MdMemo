@@ -178,21 +178,30 @@ const handleKeyDown = (event: KeyboardEvent) => {
         // 現在のテキストノードの内容をbeforeTextのみに更新
         startNode.textContent = beforeText;
 
-        if (beforeText.startsWith("# ")) {
-          console.log("h1");
-          // p要素をh1要素に置き換える
-          const h1Element = createElementAndAppend(
-            "h1",
-            {
-              contenteditable: "true",
-              textContent: beforeText.replace(/^#+\s/, ""),
-            },
-            parentNode
-          );
-          parentNode.replaceWith(h1Element);
-          // parentNodeを置き換えたh1要素に更新
-          parentNode = h1Element;
+        // #から始まり、#は最大6個まで、その後に半角スペースがある場合
+        if (/^#{1,6}\s/.test(beforeText)) {
+          // マッチした`#`の数を基に見出しレベルを決定
+          const match = beforeText.match(/^#+/);
+          if (match) {
+            const headingLevel = match[0].length;
+            const headingType = `h${Math.min(headingLevel, 6)}`; // h1からh6までを保証
+
+            // 対応する見出し要素を作成し、parentNodeを置き換え
+            const headingElement = createElementAndAppend(
+              headingType,
+              {
+                contenteditable: "true",
+                textContent: beforeText.replace(/^#+\s/, ""),
+              },
+              parentNode
+            );
+            parentNode.replaceWith(headingElement);
+
+            // parentNodeを置き換えた要素に更新
+            parentNode = headingElement;
+          }
         }
+
         // 新しいp要素を追加
         const newPElement = createElementAndAppend(
           "p",
