@@ -12,7 +12,7 @@
     "watch": "tsc -w",
     "lint": "eslint -c .eslintrc --ext .ts ./src",
     "app:dev": "tsc && concurrently vite \" electron .\" \"tsc -w\"",
-    "app:build": "yarn run vite:build && tsc && electron-builder",
+    "app:build": "yarn run vite:build && tsc && electron-builder --publish never",
     "app:preview": "yarn run vite:build && tsc && electron ."
   },
   "build": {
