@@ -171,8 +171,9 @@ const handleKeyDown = (event: KeyboardEvent) => {
         // カーソルの前後でテキストを分割
         const textContent = startNode.textContent ?? "";
         // beforeTextが空文字の場合は、innderTextにゼロ幅スペースを挿入
-        const beforeText = textContent.slice(0, range.startOffset) || "\u200B";
-        console.log(beforeText);
+        const beforeText =
+          textContent.slice(0, range.startOffset).replace(/\u200B/g, "") ||
+          "\u200B";
         const afterText = textContent.slice(range.startOffset);
 
         // 現在のテキストノードの内容をbeforeTextのみに更新
