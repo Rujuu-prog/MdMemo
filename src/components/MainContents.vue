@@ -121,92 +121,90 @@ const handleCompositionEnd = () => {
 };
 
 // 新しい要素を作成し、親要素に追加する関数
-function createElementAndAppend(type, attributes, parent) {
-  const element = document.createElement(type);
+function createElementAndAppend(type, attributes, parentNode): Element {
+  const element: Element = document.createElement(type);
   Object.keys(attributes).forEach((key) => {
     element.setAttribute(key, attributes[key]);
   });
-  if (attributes.textContent) {
-    element.textContent = attributes.textContent;
-    delete attributes.textContent;
+  // textContentまたはinnerHTMLが提供されていない場合、ゼロ幅スペースを挿入
+  if (!attributes.textContent && !attributes.innerHTML) {
+    element.innerHTML = "&#8203;"; // ゼロ幅スペースを挿入
+  } else {
+    if (attributes.textContent) {
+      element.textContent = attributes.textContent;
+    }
+    if (attributes.innerHTML) {
+      element.innerHTML = attributes.innerHTML;
+    }
   }
-  if (attributes.innerHTML) {
-    element.innerHTML = attributes.innerHTML;
-    delete attributes.innerHTML;
-  }
-  parent.appendChild(element);
+  parentNode.parentElement.insertBefore(element, parentNode.nextSibling);
   return element;
 }
 
 // カーソルを指定された要素に移動させる関数
-function moveCursorToElement(element) {
+function moveCursorToElement(element: Element) {
   const range = document.createRange();
   const selection = window.getSelection();
-  range.selectNodeContents(element);
-  range.collapse(true);
-  selection?.removeAllRanges();
-  selection?.addRange(range);
+  range.selectNodeContents(element); // 新しいpタグの内容を選択範囲として設定
+  range.collapse(true); // 選択範囲を要素の先頭に折りたたむ
+  if (selection) {
+    selection.removeAllRanges(); // 既存の選択範囲をクリア
+    selection.addRange(range); // 新しい選択範囲を追加
+  }
 }
 
 const handleKeyDown = (event: KeyboardEvent) => {
-  // Enterキーが押されたときの処理(IME入力中は無視)
   if (event.key === "Enter" && !isComposing) {
     event.preventDefault(); // デフォルトのEnterキーの挙動を抑制
+
     const selection = window.getSelection();
     if (selection && selection.rangeCount > 0) {
       const range = selection.getRangeAt(0);
       const startNode = range.startContainer;
 
-      let targetNode: Element | null = null;
-      if (startNode instanceof Element) {
-        targetNode = startNode;
-      } else if (startNode.parentNode instanceof Element) {
-        targetNode = startNode.parentNode;
-      }
+      // startNodeがテキストノードで、かつparentNodeが存在する場合
+      if (startNode.nodeType === Node.TEXT_NODE && startNode.parentNode) {
+        // 今のカーソル位置の親要素を取得
+        let parentNode = startNode.parentNode as Element;
+        // 入力エリアのdiv要素を取得
+        const parentElement = parentNode.parentElement;
+        // カーソルの前後でテキストを分割
+        const textContent = startNode.textContent ?? "";
+        // beforeTextが空文字の場合は、innderTextにゼロ幅スペースを挿入
+        const beforeText = textContent.slice(0, range.startOffset) || "\u200B";
+        console.log(beforeText);
+        const afterText = textContent.slice(range.startOffset);
 
-      if (targetNode) {
-        const editableDiv = targetNode.closest(".editable-content");
+        // 現在のテキストノードの内容をbeforeTextのみに更新
+        startNode.textContent = beforeText;
 
-        if (editableDiv) {
-          // ゼロ幅スペースを削除してからtextコンテンツを取得
-          const textContent =
-            startNode.textContent?.replace(/\u200B/g, "") || "";
-          if (textContent.startsWith("# ")) {
-            // targetNodeをh1タグに置き換える
-            targetNode.replaceWith(
-              createElementAndAppend(
-                "h1",
-                {
-                  contenteditable: "true",
-                  textContent: textContent.replace(/^#+\s/, ""),
-                },
-                editableDiv
-              )
-            );
-
-            // h1タグの後に新しいpタグを追加してカーソルを移動
-            const newP = createElementAndAppend(
-              "p",
-              {
-                contenteditable: "true",
-                innerHTML: "&#8203;",
-              },
-              editableDiv
-            );
-            moveCursorToElement(newP);
-          } else {
-            // 新しいpタグを追加
-            const newP = createElementAndAppend(
-              "p",
-              {
-                contenteditable: "true",
-                innerHTML: "&#8203;",
-              },
-              editableDiv
-            );
-            moveCursorToElement(newP);
-          }
+        if (beforeText.startsWith("# ")) {
+          console.log("h1");
+          // p要素をh1要素に置き換える
+          const h1Element = createElementAndAppend(
+            "h1",
+            {
+              contenteditable: "true",
+              textContent: beforeText.replace(/^#+\s/, ""),
+            },
+            parentNode
+          );
+          parentNode.replaceWith(h1Element);
+          // parentNodeを置き換えたh1要素に更新
+          parentNode = h1Element;
         }
+        // 新しいp要素を追加
+        const newPElement = createElementAndAppend(
+          "p",
+          {
+            contenteditable: "true",
+            textContent: afterText,
+          },
+          parentNode
+        );
+
+        // カーソルを新しいp要素に移動させる
+        moveCursorToElement(newPElement);
       }
     }
   }
