@@ -24,13 +24,14 @@ jobs:
         run: yarn install
       - name: Build Electron App
         run: |
-          if [ "${{ matrix.os }}" == "macos-latest" ]; then
-            yarn run app:build:mac
-          elif [ "${{ matrix.os }}" == "windows-latest" ]; then
-            yarn run app:build:win
-          elif [ "${{ matrix.os }}" == "ubuntu-latest" ]; then
+          if [ "${{ runner.os }}" = "Linux" ]; then
             yarn run app:build:linux
+          elif [ "${{ runner.os }}" = "macOS" ]; then
+            yarn run app:build:mac
+          elif [ "${{ runner.os }}" = "Windows" ]; then
+            yarn run app:build:win
           fi
+        shell: bash
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
