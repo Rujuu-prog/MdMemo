@@ -1,3 +1,5 @@
+// Copyright (c) 2024 Rujuu
+// This software is released under the MIT License, see LICENSE.
 import { contextBridge, ipcRenderer, IpcRendererEvent } from "electron";
 
 contextBridge.exposeInMainWorld("electronAPI", {
@@ -9,9 +11,3 @@ contextBridge.exposeInMainWorld("electronAPI", {
   onSaveRequest: (callback: any) => ipcRenderer.on("save-request", callback),
   onFileSaved: (callback: any) => ipcRenderer.on("file-saved", callback),
 });
-
-// import { contextBridge, ipcRenderer, IpcRendererEvent } from "electron";
-
-// contextBridge.exposeInMainWorld("electronAPI", {
-//   openFileDialog: () => ipcRenderer.send("open-file-dialog"),
-// });

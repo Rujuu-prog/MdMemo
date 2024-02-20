@@ -1,3 +1,5 @@
+// Copyright (c) 2024 Rujuu
+// This software is released under the MIT License, see LICENSE.
 export interface IElectronAPI {
   openFileDialog: (
     listener: (

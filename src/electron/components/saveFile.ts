@@ -1,3 +1,5 @@
+// Copyright (c) 2024 Rujuu
+// This software is released under the MIT License, see LICENSE.
 import { dialog, BrowserWindow } from "electron";
 import fs from "fs";
 import { promisify } from "util";

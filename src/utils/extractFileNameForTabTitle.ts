@@ -1,3 +1,5 @@
+// Copyright (c) 2024 Rujuu
+// This software is released under the MIT License, see LICENSE.
 /**
  * Extracts the file name from a given file path or uses a default title if the file path is `false`,
  * empty, or incomplete. This function is designed for use in UI components, such as tabs, where a file name

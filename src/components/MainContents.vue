@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+// Copyright (c) 2024 Rujuu
+// This software is released under the MIT License, see LICENSE.
 import { ref, onMounted, nextTick } from "vue";
 import { theme } from "ant-design-vue";
 import extractFileNameForTabTitle from "../utils/extractFileNameForTabTitle";

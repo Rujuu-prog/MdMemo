@@ -1,4 +1,5 @@
-// src/electron/main/main.ts
+// Copyright (c) 2024 Rujuu
+// This software is released under the MIT License, see LICENSE.
 import { join } from "path";
 import { app, BrowserWindow, Menu, ipcMain, dialog } from "electron";
 import { createMenu } from "../components/menu";
