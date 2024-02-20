@@ -1,4 +1,4 @@
-# MdMemo
+# 📒 MdMemo
 
 
 https://github.com/Rujuu-prog/MdMemo/assets/81368541/c964106c-87cf-4bf3-8a2d-fe104a42fa07
@@ -7,7 +7,7 @@ https://github.com/Rujuu-prog/MdMemo/assets/81368541/c964106c-87cf-4bf3-8a2d-fe1
 
 MdMemo is a notepad desktop application that allows you to write notes in Markdown. It combines the simplicity of a notepad with the power of Markdown formatting, making it perfect for developers, writers, and anyone who prefers Markdown for note-taking.
 
-## Installation
+## 📬 Installation
 
 To install MdMemo, please follow these steps:
 
@@ -20,13 +20,13 @@ To install MdMemo, please follow these steps:
    - For Linux, download the `.AppImage` or `.snap` file, depending on your preference.
 5. Run the downloaded installer to install MdMemo on your computer.
 
-## Features
+## 🛠️ Features
 
 - **Limited Markdown Support (Under Development)**: Currently, the application supports converting headings (h tags) in Markdown. We are actively working to expand its capabilities to include more formatting options. Stay tuned for updates!
 - **Cross-Platform**: Available for Windows, macOS, and Linux.
 - **Simple Interface**: A clean and intuitive interface that keeps you focused on writing.
 
-## Contributing
+## 🤝 Contributing
 
 Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
@@ -39,11 +39,11 @@ Don't forget to give the project a star! Thanks again!
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-## License
+## 🔏 License
 
 Distributed under the MIT License. See `LICENSE` for more information.
 
-## Acknowledgements
+## 📎 Acknowledgements
 
 - [Electron](https://www.electronjs.org/)
 - [Markdown Guide](https://www.markdownguide.org/)
