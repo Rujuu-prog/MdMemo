@@ -1,5 +1,10 @@
 # MdMemo
 
+
+https://github.com/Rujuu-prog/MdMemo/assets/81368541/c964106c-87cf-4bf3-8a2d-fe104a42fa07
+
+
+
 MdMemo is a notepad desktop application that allows you to write notes in Markdown. It combines the simplicity of a notepad with the power of Markdown formatting, making it perfect for developers, writers, and anyone who prefers Markdown for note-taking.
 
 ## Installation
