@@ -1,18 +1,47 @@
-# Vue 3 + TypeScript + Vite
+# MdMemo
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+MdMemo is a notepad desktop application that allows you to write notes in Markdown. It combines the simplicity of a notepad with the power of Markdown formatting, making it perfect for developers, writers, and anyone who prefers Markdown for note-taking.
 
-## Recommended IDE Setup
+## Installation
 
-- [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
+To install MdMemo, please follow these steps:
 
-## Type Support For `.vue` Imports in TS
+1. Visit the [MdMemo Releases page](https://github.com/Rujuu-prog/MdMemo/releases) on GitHub.
+2. Look for the latest release.
+3. Under the "Assets" section of the release, you will find downloadable files for different operating systems.
+4. Download the appropriate installer for your operating system:
+   - For Windows, download the `.exe` file.
+   - For macOS, download the `.dmg` file.
+   - For Linux, download the `.AppImage` or `.snap` file, depending on your preference.
+5. Run the downloaded installer to install MdMemo on your computer.
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin) to make the TypeScript language service aware of `.vue` types.
+## Features
 
-If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has also implemented a [Take Over Mode](https://github.com/johnsoncodehk/volar/discussions/471#discussioncomment-1361669) that is more performant. You can enable it by the following steps:
+- **Limited Markdown Support (Under Development)**: Currently, the application supports converting headings (h tags) in Markdown. We are actively working to expand its capabilities to include more formatting options. Stay tuned for updates!
+- **Cross-Platform**: Available for Windows, macOS, and Linux.
+- **Simple Interface**: A clean and intuitive interface that keeps you focused on writing.
 
-1. Disable the built-in TypeScript Extension
-   1. Run `Extensions: Show Built-in Extensions` from VSCode's command palette
-   2. Find `TypeScript and JavaScript Language Features`, right click and select `Disable (Workspace)`
-2. Reload the VSCode window by running `Developer: Reload Window` from the command palette.
+## Contributing
+
+Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+
+If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
+Don't forget to give the project a star! Thanks again!
+
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## License
+
+Distributed under the MIT License. See `LICENSE` for more information.
+
+## Acknowledgements
+
+- [Electron](https://www.electronjs.org/)
+- [Markdown Guide](https://www.markdownguide.org/)
+- [Rujuu](https://github.com/Rujuu-prog) (Add your name or your organization if you wish)
+
+Thank you for considering MdMemo for your note-taking needs!
