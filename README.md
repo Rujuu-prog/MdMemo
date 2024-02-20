@@ -47,6 +47,6 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 - [Electron](https://www.electronjs.org/)
 - [Markdown Guide](https://www.markdownguide.org/)
-- [Rujuu](https://github.com/Rujuu-prog) (Add your name or your organization if you wish)
+- [Rujuu](https://github.com/Rujuu-prog)
 
 Thank you for considering MdMemo for your note-taking needs!
