@@ -113,6 +113,18 @@ export const createMenu = (win: BrowserWindow) => {
       ],
     },
     {
+      label: "Tabs",
+      submenu: [
+        {
+          label: "New Tab",
+          accelerator: "CmdOrCtrl+T",
+          click: () => {
+            win.webContents.send("create-new-tab");
+          },
+        },
+      ],
+    },
+    {
       label: "Help",
       submenu: [
         {

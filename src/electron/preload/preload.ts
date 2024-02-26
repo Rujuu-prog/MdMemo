@@ -10,4 +10,6 @@ contextBridge.exposeInMainWorld("electronAPI", {
     ipcRenderer.invoke("save-file", data, filePath),
   onSaveRequest: (callback: any) => ipcRenderer.on("save-request", callback),
   onFileSaved: (callback: any) => ipcRenderer.on("file-saved", callback),
+  onNewTabRequested: (callback: any) =>
+    ipcRenderer.on("create-new-tab", callback),
 });

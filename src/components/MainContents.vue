@@ -108,6 +108,11 @@ onMounted(() => {
       currentPane.title = fileName;
     }
   });
+
+  // 新しいタブの追加リクエストの処理
+  window.electronAPI.onNewTabRequested(() => {
+    add(false, false);
+  });
 });
 
 // IME入力中かどうかを判定するフラグ
