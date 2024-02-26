@@ -83,6 +83,13 @@ export const createMenu = (win: BrowserWindow) => {
             if (win && win.webContents) win.webContents.paste();
           },
         },
+        {
+          label: "Select All",
+          accelerator: "CmdOrCtrl+A",
+          click: () => {
+            if (win && win.webContents) win.webContents.selectAll();
+          },
+        },
       ],
     },
     {
