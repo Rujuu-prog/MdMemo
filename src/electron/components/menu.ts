@@ -49,7 +49,7 @@ export const createMenu = (win: BrowserWindow) => {
           label: "Undo",
           accelerator: "CmdOrCtrl+Z",
           click: () => {
-            console.log("Undo");
+            if (win && win.webContents) win.webContents.undo();
           },
         },
         {
