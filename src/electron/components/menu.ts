@@ -122,6 +122,14 @@ export const createMenu = (win: BrowserWindow) => {
             win.webContents.send("create-new-tab");
           },
         },
+        {
+          label: "Next Tab",
+          accelerator:
+            process.platform === "darwin" ? "Cmd+Shift+]" : "Ctrl+Tab",
+          click: () => {
+            win.webContents.send("next-tab");
+          },
+        },
       ],
     },
     {

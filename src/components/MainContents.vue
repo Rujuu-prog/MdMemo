@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 // Copyright (c) 2024 Rujuu
 // This software is released under the MIT License, see LICENSE.
-import { ref, onMounted, nextTick } from "vue";
+import { ref, onMounted, nextTick, computed } from "vue";
 import { theme } from "ant-design-vue";
 import extractFileNameForTabTitle from "../utils/extractFileNameForTabTitle";
 import { convertMarkdownToHtml } from "../utils/markdownToHtml";
@@ -112,6 +112,11 @@ onMounted(() => {
   // 新しいタブの追加リクエストの処理
   window.electronAPI.onNewTabRequested(() => {
     add(false, false);
+  });
+
+  // 前のタブに移動するリクエストの処理
+  window.electronAPI.onNextTabRequested(() => {
+    moveToNextTab();
   });
 });
 
@@ -235,6 +240,18 @@ const saveContent = (event: Event) => {
     currentPane.content = target.innerHTML;
   }
 };
+
+// 現在アクティブなタブのインデックスを計算
+const currentTabIndex = computed(() => {
+  return panes.value.findIndex((pane) => pane.key === activeKey.value);
+});
+
+// 次のタブに移動する関数
+const moveToNextTab = () => {
+  const nextIndex = (currentTabIndex.value + 1) % panes.value.length;
+  activeKey.value = panes.value[nextIndex].key;
+};
+
 </script>
 
 <template>
