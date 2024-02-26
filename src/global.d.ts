@@ -13,6 +13,9 @@ export interface IElectronAPI {
   onFileSaved: (
     callback: (_e: Electron.IpcRendererEvent, savedFilePath: string) => void
   ) => void;
+  onNewTabRequested: (callback: () => void) => void;
+  onNextTabRequested: (callback: () => void) => void;
+  onPreviousTabRequested: (callback: () => void) => void;
 }
 
 declare global {

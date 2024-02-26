@@ -49,14 +49,14 @@ export const createMenu = (win: BrowserWindow) => {
           label: "Undo",
           accelerator: "CmdOrCtrl+Z",
           click: () => {
-            console.log("Undo");
+            if (win && win.webContents) win.webContents.undo();
           },
         },
         {
           label: "Redo",
           accelerator: "CmdOrCtrl+Shift+Z",
           click: () => {
-            console.log("Redo");
+            if (win && win.webContents) win.webContents.redo();
           },
         },
         {
@@ -83,6 +83,13 @@ export const createMenu = (win: BrowserWindow) => {
             if (win && win.webContents) win.webContents.paste();
           },
         },
+        {
+          label: "Select All",
+          accelerator: "CmdOrCtrl+A",
+          click: () => {
+            if (win && win.webContents) win.webContents.selectAll();
+          },
+        },
       ],
     },
     {
@@ -101,6 +108,34 @@ export const createMenu = (win: BrowserWindow) => {
             process.platform === "darwin" ? "Alt+Command+I" : "Ctrl+Shift+I",
           click: (item, focusedWindow) => {
             if (focusedWindow) focusedWindow.webContents.toggleDevTools();
+          },
+        },
+      ],
+    },
+    {
+      label: "Tabs",
+      submenu: [
+        {
+          label: "New Tab",
+          accelerator: "CmdOrCtrl+T",
+          click: () => {
+            win.webContents.send("create-new-tab");
+          },
+        },
+        {
+          label: "Next Tab",
+          accelerator:
+            process.platform === "darwin" ? "Cmd+Shift+]" : "Ctrl+Tab",
+          click: () => {
+            win.webContents.send("next-tab");
+          },
+        },
+        {
+          label: "Previous Tab",
+          accelerator:
+            process.platform === "darwin" ? "Cmd+Shift+[" : "Ctrl+Shift+Tab",
+          click: () => {
+            win.webContents.send("previous-tab");
           },
         },
       ],
