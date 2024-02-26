@@ -130,6 +130,14 @@ export const createMenu = (win: BrowserWindow) => {
             win.webContents.send("next-tab");
           },
         },
+        {
+          label: "Previous Tab",
+          accelerator:
+            process.platform === "darwin" ? "Cmd+Shift+[" : "Ctrl+Shift+Tab",
+          click: () => {
+            win.webContents.send("previous-tab");
+          },
+        },
       ],
     },
     {

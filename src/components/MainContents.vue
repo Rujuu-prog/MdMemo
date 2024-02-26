@@ -118,6 +118,11 @@ onMounted(() => {
   window.electronAPI.onNextTabRequested(() => {
     moveToNextTab();
   });
+
+  // 次のタブに移動するリクエストの処理
+  window.electronAPI.onPreviousTabRequested(() => {
+    moveToPreviousTab();
+  });
 });
 
 // IME入力中かどうかを判定するフラグ
@@ -252,6 +257,12 @@ const moveToNextTab = () => {
   activeKey.value = panes.value[nextIndex].key;
 };
 
+// 前のタブに移動する関数
+const moveToPreviousTab = () => {
+  const previousIndex =
+    (currentTabIndex.value - 1 + panes.value.length) % panes.value.length;
+  activeKey.value = panes.value[previousIndex].key;
+};
 </script>
 
 <template>

@@ -15,6 +15,7 @@ export interface IElectronAPI {
   ) => void;
   onNewTabRequested: (callback: () => void) => void;
   onNextTabRequested: (callback: () => void) => void;
+  onPreviousTabRequested: (callback: () => void) => void;
 }
 
 declare global {

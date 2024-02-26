@@ -13,4 +13,6 @@ contextBridge.exposeInMainWorld("electronAPI", {
   onNewTabRequested: (callback: any) =>
     ipcRenderer.on("create-new-tab", callback),
   onNextTabRequested: (callback: any) => ipcRenderer.on("next-tab", callback),
+  onPreviousTabRequested: (callback: any) =>
+    ipcRenderer.on("previous-tab", callback),
 });
