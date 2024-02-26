@@ -56,7 +56,7 @@ export const createMenu = (win: BrowserWindow) => {
           label: "Redo",
           accelerator: "CmdOrCtrl+Shift+Z",
           click: () => {
-            console.log("Redo");
+            if (win && win.webContents) win.webContents.redo();
           },
         },
         {
