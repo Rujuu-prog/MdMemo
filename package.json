@@ -53,7 +53,7 @@
     }
   },
   "dependencies": {
-    "@types/turndown": "^5.0.4",
+    "@types/turndown": "^5.0.5",
     "ant-design-vue": "4.x",
     "turndown": "^7.1.2",
     "vue": "^3.4.15"
